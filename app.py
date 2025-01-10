@@ -1,5 +1,6 @@
 from typing import TypedDict
 
+from faker import Faker
 from flask import Flask
 from webargs import fields
 from webargs.flaskparser import use_args
@@ -9,17 +10,22 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world() -> str:
-    return "Hello World!"
+    faker = Faker()
+    return f"Hello {faker.name()}!"
 
 
-# TODO: Research about route registration via function, not decorator
-# def hello_world()-> str:
-#     return "Hello World! 123213123"
-#
-# app.route("/", endpoint=hello_world)
+def hello_world_other() -> str:
+    return "Hello World! Other."
 
-# def health() -> str:
-#     return "OK"
+
+# Registering routes as function, not as decorator.
+app.route("/other")(hello_world_other)
+app.route("/other/2")(hello_world_other)
+
+
+@app.route("/health")
+def health() -> str:
+    return "OK"
 
 
 def generate_greeting(name: str, age: int) -> str:
@@ -47,7 +53,8 @@ class ExampleSimpleArgsAsDict(
 
 @app.route("/example-simple/hello")
 @use_args(
-    {"name": fields.Str(missing="Bob"), "age": fields.Int(missing=42)}, location="query"
+    {"name": fields.Str(missing="Bob"), "age": fields.Int(missing=42)},
+    location="query",
 )
 def example_simple_hello(
     # args: dict,
