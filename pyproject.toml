@@ -1,0 +1,10 @@
+[project]
+name = "shared-flask-example-2024-12-10"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13.1"
+dependencies = [
+    "flask>=3.1.0",
+    "webargs>=8.6.0",
+]
