@@ -23,8 +23,5 @@ rust-i-install:
     cargo install-update cargo-update &&\
     cargo install-update --version
 
-# Install "Rust" completions for bash. If needed.
-#
-
 # Make all for "Rust"
 @rust-i-install-i-all: rust-i-install rust-i-install-i-upgrade
