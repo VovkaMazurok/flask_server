@@ -1,9 +1,11 @@
 from typing import TypedDict
 
 from faker import Faker
-from flask import Flask
+from flask import Flask, render_template
 from webargs import fields
 from webargs.flaskparser import use_args
+
+from apps.services.generate_users import generate_users, render_users
 
 app = Flask(__name__)
 
@@ -64,6 +66,22 @@ def example_simple_hello(
     age = args["age"]
 
     return generate_greeting(name=name, age=age)
+
+
+@app.route("/template")
+def render_by_template_view() -> str:
+    return render_template("index.html")
+
+
+@app.route("/example-text/fake/users")
+# @use_args(
+#     {"is_wait": fields.Bool(missing=False), "generator_id": fields.Int(missing=0)},
+#     location="query",
+# )
+def example_text_fake_users() -> str:
+    users = generate_users(count=2)
+
+    return render_users(users=users)
 
 
 # if __name__ == "__main__":
