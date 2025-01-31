@@ -7,3 +7,5 @@
 !.python-version
 
 !app.py
+!apps/
+!templates/

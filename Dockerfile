@@ -31,7 +31,7 @@ FROM base AS builder
 #    pip install --no-cache-dir --requirement requirements.txt
 
 
-COPY --from=ghcr.io/astral-sh/uv:0.5.16 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.5.26 /uv /uvx /bin/
 #
 # Compile Python source files to bytecode after installation
 # https://docs.astral.sh/uv/configuration/environment/#uv_compile_bytecode
@@ -62,7 +62,9 @@ ARG VENV_DIR=${WORKDIR}/.venv
 COPY --from=builder /wd/.venv ${VENV_DIR}
 
 
+COPY --chown=${USER} templates/ templates/
 COPY --chown=${USER} app.py app.py
+COPY --chown=${USER} apps/ apps/
 
 USER ${USER}
 

@@ -5,9 +5,14 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13.1"
 dependencies = [
+    # For data generation.
     "faker>=33.3.1",
+    #
     "flask>=3.1.0",
     "webargs>=8.6.0",
+    #
+    # Validation, serialization.
+    "pydantic>=2.10.6",
 ]
 
 [tool.ruff]
