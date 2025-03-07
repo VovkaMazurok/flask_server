@@ -1,11 +1,17 @@
 from typing import TypedDict
 
 from faker import Faker
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from webargs import fields
 from webargs.flaskparser import use_args
 
-from apps.services.generate_users import generate_users, render_users
+from apps.services.generate_users import (
+    UserBase,
+    UserWithId,
+    generate_users,
+    generate_users_for_json_response,
+    render_users,
+)
 
 app = Flask(__name__)
 
@@ -82,6 +88,43 @@ def example_text_fake_users() -> str:
     users = generate_users(count=2)
 
     return render_users(users=users)
+
+
+@app.route("/example-json/users")
+@use_args(
+    {
+        "amount": fields.Int(missing=2),
+        # "is_wait": fields.Bool(missing=False),
+        # "generator_id": fields.Int(missing=0),
+    },
+    location="query",
+)
+def example_json_get_users(args: dict) -> list:
+    amount: int = args["amount"]
+
+    users_for_json = generate_users_for_json_response(amount=amount)
+
+    return users_for_json.model_dump(mode="json")
+
+
+@app.route("/example-json/users", methods=["POST"])
+def example_json_create_user() -> dict:
+    data_raw = request.json
+    user = UserBase.model_validate(data_raw)
+
+    # Simulate saving to a database
+    user_id = 1
+
+    user_created = UserWithId(
+        id=user_id,
+        **user.model_dump(mode="python"),
+    )
+
+    return user_created.model_dump(mode="json")
+
+
+# Create curl command to test the endpoint
+# curl -X POST -H "Content-Type: application/json" -d '{"name": "John", "age": 30}' http://site.homework.local.net:60000/example-json/users
 
 
 # if __name__ == "__main__":
