@@ -1,3 +1,5 @@
+import random
+import time
 from typing import TypedDict
 
 from faker import Faker
@@ -94,13 +96,23 @@ def example_text_fake_users() -> str:
 @use_args(
     {
         "amount": fields.Int(missing=2),
-        # "is_wait": fields.Bool(missing=False),
-        # "generator_id": fields.Int(missing=0),
+        "is_wait": fields.Bool(missing=False),
+        "generator_id": fields.Int(missing=0),
     },
     location="query",
 )
 def example_json_get_users(args: dict) -> list:
     amount: int = args["amount"]
+    is_wait: bool = args["is_wait"]
+    generator_id: int = args["generator_id"]
+
+    if is_wait:
+        time_to_wait = random.randint(1, 5)  # noqa: S311
+        logger = app.logger
+        logger.info(f"Time to wait: {time_to_wait}", extra={"generator_id": generator_id})
+        # Simulate waiting
+        time.sleep(time_to_wait)
+        logger.info("Wait done", extra={"generator_id": generator_id})
 
     users_for_json = generate_users_for_json_response(amount=amount)
 
