@@ -27,6 +27,11 @@ def generate_users(count: int) -> Iterator[UserBase]:
         yield generate_user()
 
 
+class CurrencyPair(BaseModel):
+    base: str
+    quote: str
+
+
 type OutputAsHtml = str
 
 

@@ -7,6 +7,8 @@ from flask import Flask, render_template, request
 from webargs import fields
 from webargs.flaskparser import use_args
 
+from apps.db_utils.create_db_table import create_db_table
+from apps.db_utils.db_connection import DBConnection
 from apps.services.generate_users import (
     UserBase,
     UserWithId,
@@ -16,6 +18,8 @@ from apps.services.generate_users import (
 )
 
 app = Flask(__name__)
+
+create_db_table()
 
 
 @app.route("/")
@@ -137,6 +141,36 @@ def example_json_create_user() -> dict:
 
 # Create curl command to test the endpoint
 # curl -X POST -H "Content-Type: application/json" -d '{"name": "John", "age": 30}' http://site.homework.local.net:60000/example-json/users
+
+
+@app.route("/example-sql/users", methods=["POST"])
+def example_sql_create_user() -> dict:
+    data_raw = request.json
+    user_validated = UserBase.model_validate(data_raw)
+
+    # Make SQL query to insert user into the database.
+    # Then get actual user from the database.
+    # Validate it.
+    # Return it for serialization.
+    with DBConnection() as connection, connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO users (name, age) VALUES (:name, :age) RETURNING id;",
+            user_validated.model_dump(mode="json"),
+        )
+        user_id = cursor.fetchone()[0]
+
+        # Get the user from the database
+        cursor.execute(
+            "SELECT id, name, age FROM users WHERE id = :id;",
+            {"id": user_id},
+        )
+
+        user_data_as_db_row = cursor.fetchone()
+        user_data_as_dict = dict(user_data_as_db_row)
+        user_saved = UserWithId.model_validate(user_data_as_dict)
+
+    return user_saved.model_dump(mode="json")
 
 
 # if __name__ == "__main__":
