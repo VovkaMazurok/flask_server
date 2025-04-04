@@ -6,11 +6,15 @@ ENV PYTHONUNBUFFERED=1
 ARG WORKDIR=/wd
 
 # [update_and_pre_install]-[BEGIN]
+# Also install "libmagic"
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     \
     apt update \
-    && apt upgrade --yes
+    && apt upgrade --yes \
+    && apt install --yes \
+        libmagic1
+
 # [update_and_pre_install]-[END]
 
 ARG USER=user
