@@ -13,6 +13,7 @@ dependencies = [
     #
     # Validation, serialization.
     "pydantic>=2.10.6",
+    "python-magic>=0.4.27",
 ]
 
 [tool.ruff]
