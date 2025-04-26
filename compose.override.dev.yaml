@@ -5,11 +5,10 @@ services:
 
     user: ${USER_ID:-1000}
     ports:
-      - "60000:5000"
+      - "60002:6002"
 
     volumes:
       - ./db:/wd/db
-      - ./files:/wd/files
 
     environment:
       - FLASK_ENV=development
@@ -36,4 +35,4 @@ services:
     # https://github.com/krallin/tini/issues/8
     init: true
 
-    command: --host app
+    command: --host 0.0.0.0
